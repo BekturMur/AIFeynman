@@ -1,0 +1,108 @@
+Metadata-Version: 2.1
+Name: condensed-matter-ai
+Version: 0.1.0
+Summary: A package for analyzing condensed matter physics using AIFeynman
+Home-page: https://github.com/yourusername/condensed-matter-ai
+Author: Your Name
+Author-email: your.email@example.com
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# CondensedMatterAI
+
+A Python project that applies AIFeynman to discover physical laws in condensed matter systems. This project demonstrates how machine learning can be used to identify fundamental relationships in complex quantum systems.
+
+## Overview
+
+This project uses AIFeynman to:
+- Discover physical laws from experimental data in condensed matter systems
+- Analyze quantum phase transitions
+- Model electronic properties of materials
+- Predict material properties based on fundamental parameters
+
+## Features
+
+- Data generation for various condensed matter systems
+- AIFeynman integration for symbolic regression
+- Visualization tools for physical laws discovery
+- Benchmarking against known theoretical models
+
+## Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/BekturMur/AIFeynman.git
+cd CondensedMatterAI
+
+# Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+## Usage
+
+```python
+from condensed_matter_ai import MaterialAnalyzer
+
+# Initialize analyzer
+analyzer = MaterialAnalyzer()
+
+# Load experimental data
+data = analyzer.load_data("path_to_data.csv")
+
+# Discover physical laws
+laws = analyzer.discover_laws(data)
+
+# Visualize results
+analyzer.visualize_results(laws)
+```
+
+## Project Structure
+
+```
+CondensedMatterAI/
+â”œâ”€â”€ src/
+â”‚   â”œâ”€â”€ __init__.py
+â”‚   â”œâ”€â”€ material_analyzer.py
+â”‚   â”œâ”€â”€ data_generator.py
+â”‚   â””â”€â”€ visualization.py
+â”œâ”€â”€ tests/
+â”‚   â”œâ”€â”€ __init__.py
+â”‚   â””â”€â”€ test_material_analyzer.py
+â”œâ”€â”€ examples/
+â”‚   â””â”€â”€ example_usage.py
+â”œâ”€â”€ requirements.txt
+â””â”€â”€ README.md
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Citation
+
+If you use this project in your research, please cite:
+
+```bibtex
+@software{CondensedMatterAI,
+  author = {Your Name},
+  title = {CondensedMatterAI: AIFeynman for Condensed Matter Physics},
+  year = {2024},
+  publisher = {GitHub},
+  url = {https://github.com/BekturMur/AIFeynman}
+}
+``` 
+

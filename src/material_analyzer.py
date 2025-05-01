@@ -4,10 +4,11 @@ MaterialAnalyzer - Main class for analyzing condensed matter systems using AIFey
 
 import numpy as np
 import pandas as pd
-from aifeynman import Feynman
+import aifeynman
 from typing import Dict, List, Tuple, Optional
 import torch
 from pathlib import Path
+import os
 
 class MaterialAnalyzer:
     """
@@ -22,7 +23,6 @@ class MaterialAnalyzer:
             device: Device to run computations on ('cuda' or 'cpu')
         """
         self.device = device
-        self.feynman = Feynman(device=device)
         self.data = None
         self.discovered_laws = None
         
@@ -59,31 +59,83 @@ class MaterialAnalyzer:
         return X, y
     
     def discover_laws(self, 
-                     target_column: str,
-                     feature_columns: List[str],
+                     features: np.ndarray,
+                     target: np.ndarray,
+                     feature_names: List[str] = None,
+                     target_name: str = None,
                      max_terms: int = 5,
                      max_operations: int = 10) -> Dict:
         """
         Discover physical laws using AIFeynman.
         
         Args:
-            target_column: Name of the target variable column
-            feature_columns: List of feature column names
+            features: Feature matrix (n_samples, n_features)
+            target: Target variable array (n_samples,)
+            feature_names: Optional list of feature names
+            target_name: Optional target variable name
             max_terms: Maximum number of terms in the discovered equation
             max_operations: Maximum number of operations in the discovered equation
             
         Returns:
             Dictionary containing discovered laws and their metrics
         """
-        X, y = self.prepare_data(target_column, feature_columns)
+        # Create results directory if it doesn't exist
+        results_dir = os.path.abspath('results')
+        os.makedirs(results_dir, exist_ok=True)
         
-        # Run AIFeynman analysis
-        results = self.feynman.fit(X, y, 
-                                 max_terms=max_terms,
-                                 max_operations=max_operations)
+        # Save data in AIFeynman format
+        data = np.column_stack((features, target))
+        data_file = os.path.join(results_dir, 'input.txt')
+        np.savetxt(data_file, data, delimiter='\t')
         
-        self.discovered_laws = results
-        return results
+        # Remember current directory
+        current_dir = os.getcwd()
+        
+        try:
+            # Change to results directory
+            os.chdir(results_dir)
+            
+            # Run AIFeynman analysis
+            results = aifeynman.run_aifeynman(
+                'input.txt',
+                '.',
+                BF_try_time=300,
+                BF_ops_file_type='simple',
+                polyfit_deg=2
+            )
+            
+            # Parse the results file
+            results_file = os.path.join(results_dir, 'results_pareto.txt')
+            if os.path.exists(results_file):
+                with open(results_file, 'r') as f:
+                    self.discovered_laws = f.readlines()
+                    
+                # Format the laws with variable names if provided
+                if feature_names and target_name:
+                    formatted_laws = []
+                    for law in self.discovered_laws:
+                        formatted_law = law
+                        for i, name in enumerate(feature_names):
+                            formatted_law = formatted_law.replace(f'x{i}', name)
+                        formatted_law = formatted_law.replace('y', target_name)
+                        formatted_laws.append(formatted_law)
+                    self.discovered_laws = formatted_laws
+            else:
+                self.discovered_laws = ["No laws discovered"]
+            
+        except Exception as e:
+            print(f"Error during AIFeynman analysis: {str(e)}")
+            self.discovered_laws = ["Error during analysis"]
+            
+        finally:
+            # Change back to original directory
+            os.chdir(current_dir)
+            
+            # Clean up temporary file
+            if os.path.exists(data_file):
+                os.unlink(data_file)
+        
+        return self.discovered_laws
     
     def evaluate_laws(self, test_data: Optional[pd.DataFrame] = None) -> Dict:
         """

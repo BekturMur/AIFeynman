@@ -45,8 +45,7 @@ def main():
     )
     
     visualizer.plot_discovered_laws(
-        laws,
-        title='Discovered Physical Laws',
+        laws=analyzer.discovered_laws,
         save_path='output/discovered_laws.png'
     )
     

@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 from typing import Dict, List, Optional
 import seaborn as sns
+import os
 
 class Visualizer:
     """
@@ -95,27 +96,30 @@ class Visualizer:
             plt.savefig(save_path, dpi=300, bbox_inches='tight')
         plt.close()
         
-    def plot_discovered_laws(self,
-                           laws: Dict,
-                           title: str = "Discovered Physical Laws",
-                           save_path: Optional[str] = None):
-        """
-        Plot discovered physical laws.
+    def plot_discovered_laws(self, laws: List[str], save_path: Optional[str] = None) -> None:
+        """Plot the discovered physical laws.
         
         Args:
-            laws: Dictionary containing discovered laws
-            title: Plot title
+            laws: List of discovered laws
             save_path: Optional path to save the plot
         """
-        plt.figure(figsize=(12, 6))
-        plt.text(0.1, 0.5, "\n".join([f"Law {i+1}: {law}" for i, law in enumerate(laws)]),
-                fontsize=12, family='monospace')
+        plt.figure(figsize=(10, 6))
         plt.axis('off')
-        plt.title(title)
+        
+        if laws and isinstance(laws, list):
+            plt.text(0.1, 0.5, "\n".join([f"Law {i+1}: {law.strip()}" for i, law in enumerate(laws)]),
+                    fontsize=12, verticalalignment='center')
+        else:
+            plt.text(0.1, 0.5, "No laws discovered", fontsize=12, verticalalignment='center')
+        
+        plt.title("Discovered Physical Laws")
         
         if save_path:
-            plt.savefig(save_path, dpi=300, bbox_inches='tight')
-        plt.close()
+            os.makedirs(os.path.dirname(save_path), exist_ok=True)
+            plt.savefig(save_path)
+            plt.close()
+        else:
+            plt.show()
         
     def plot_error_analysis(self,
                           predictions: np.ndarray,
